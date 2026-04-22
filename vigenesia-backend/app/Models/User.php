@@ -7,11 +7,14 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens; // Penting untuk API Login
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens ,HasFactory, Notifiable;
+
+    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -19,9 +22,12 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'nama',
+        'profesi',
         'email',
         'password',
+        'role_id',
+        'is_active',
     ];
 
     /**
@@ -31,8 +37,20 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
+
+    // Relasi: User dimiliki oleh satu Role
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    // Relasi: User memiliki banyak Motivasi
+    public function motivasis()
+    {
+        return $this->hasMany(Motivasi::class);
+    }
+    
 
     /**
      * Get the attributes that should be cast.
