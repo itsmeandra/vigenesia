@@ -15,8 +15,8 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(),[
             'nama' => 'required|string|max:255',
             'profesi' => 'required|string',
-            'email' => 'required|string|email|max:255|unique:user',
-            'password' => 'requiredstring|min:6',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6',
         ]);
 
         if ($validator->fails()) {
@@ -28,7 +28,7 @@ class AuthController extends Controller
             'profesi' => $request->profesi,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 2,
+            'role_id' => 2,
             'is_active' => 1
         ]);
 
