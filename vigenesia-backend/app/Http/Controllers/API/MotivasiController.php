@@ -24,7 +24,7 @@ class MotivasiController extends Controller
 
         $motivasi = Motivasi::create([
             'isi_motivasi' => $request->isi_motivasi,
-            'iduser' => $request->user()->id,   // Mengambil ID dari user yang sedang login
+            'user_id' => $request->user()->id,   // Mengambil ID dari user yang sedang login
         ]);
 
         return response()->json([
@@ -51,7 +51,7 @@ class MotivasiController extends Controller
         }
 
         // Cek apakah yang edit adalah pemilik motivasi
-        if ($motivasi->iduser != $request->user()->id) {
+        if ($motivasi->user_id != $request->user()->id) {
             return response()->json(['message' => 'Anda tidak berhak mengedit motivasi ini'], 403);
         }
 
@@ -73,7 +73,7 @@ class MotivasiController extends Controller
             return response()->json(['message' => 'Data tidak ditemukan'], 404);
         }
 
-        if ($motivasi->iduser != $request->user()->id()) {
+        if ($motivasi->user_id != $request->user()->id) {
             return response()->json(['message' => 'Anda tidak berhak menghaapus motivasi'], 403);
         }
 
