@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\MotivasiController;
+use App\Http\Controllers\API\KategoriController;
 
 // ROUTE PUBLIC (Tidak perlu login / token)
 Route::post('/register', [AuthController::class, 'register']);
@@ -26,3 +27,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/motivasi/{id}', [MotivasiController::class, 'update']);
     Route::delete('/motivasi/{id}', [MotivasiController::class, 'destroy']);
 });
+
+Route::get('/kategori', [KategoriController::class, 'index']);
