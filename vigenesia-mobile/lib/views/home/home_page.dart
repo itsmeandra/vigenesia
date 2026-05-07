@@ -68,6 +68,10 @@ class _HomePageState extends State<HomePage> {
                   ? motivasi['user']['nama']
                   : 'Anonim';
 
+              String namaKategori = motivasi['kategori'] != null
+                  ? motivasi['kategori']['nama_kategori']
+                  : 'Umum';
+
               return Card(
                 elevation: 3,
                 margin: EdgeInsets.symmetric(vertical: 8),
@@ -77,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   subtitle: Text(
-                    "Oleh: $namaPenulis",
+                    "Oleh: $namaPenulis\nKategori: $namaKategori",
                     style: TextStyle(fontStyle: FontStyle.italic),
                   ),
                   trailing: Row(
@@ -93,6 +97,7 @@ class _HomePageState extends State<HomePage> {
                               builder: (context) => EditMotivasiPage(
                                 id: motivasi['id'],
                                 isiMotivasiLama: motivasi['isi_motivasi'],
+                                kategoriIdLama: motivasi['kategori_id'],
                               ),
                             ),
                           );
@@ -137,9 +142,7 @@ class _HomePageState extends State<HomePage> {
                           // Jika user klik "Hapus"
                           if (confirm == true) {
                             bool isDeleted = await _apiService.deleteMotivasi(
-                              int.parse(
-                                motivasi['id'].toString(),
-                              ),
+                              int.parse(motivasi['id'].toString()),
                             );
                             if (isDeleted) {
                               ScaffoldMessenger.of(context).showSnackBar(
