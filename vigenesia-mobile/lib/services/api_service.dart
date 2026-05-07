@@ -69,14 +69,14 @@ class ApiService {
   }
 
   // Fungsi untuk menambah motivasi baru
-  Future<bool> createMotivasi(String isiMotivasi) async {
+  Future<bool> createMotivasi(String isiMotivasi, int kategoriId) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token'); // Ambil token yang tersimpan
 
       final response = await _dio.post(
         '$baseUrl/motivasi',
-        data: {'isi_motivasi': isiMotivasi},
+        data: {'isi_motivasi': isiMotivasi, 'kategori_id': kategoriId},
         options: Options(
           headers: {
             'Accept': 'application/json',
@@ -91,21 +91,21 @@ class ApiService {
         return true;
       }
       return false;
-    } catch (e) {
-      print('Error Create Motivasi: $e');
-      return false;
-    }
+      } catch (e) {
+        print('Error Create Motivasi: $e');
+        return false;
+      }
   }
 
   // Fungsi untuk mengubah/mengedit motivasi (PUT)
-  Future<bool> updateMotivasi(int id, String isiMotivasi) async {
+  Future<bool> updateMotivasi(int id, String isiMotivasi, int kategoriId) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
 
       final response = await _dio.put(
         '$baseUrl/motivasi/$id',
-        data: {'isi_motivasi': isiMotivasi},
+        data: {'isi_motivasi': isiMotivasi, 'kategori_id': kategoriId},
         options: Options(
           headers: {
             'Accept': 'application/json',
@@ -153,6 +153,20 @@ class ApiService {
 
       print('Error Delete Motivasi: ${e.response?.statusCode}');
       return false;
+    }
+  }
+
+  // Fungsi ini untuk mengambil list Kategori
+  Future<List<dynamic>> getKategori() async {
+    try {
+      final response = await _dio.get('$baseUrl/kategori');
+      if (response.statusCode == 200) {
+        return response.data['data'];
+      }
+      return [];
+    } catch (e) {
+      print('Error Get Kategori: $e');
+      return [];
     }
   }
 }
