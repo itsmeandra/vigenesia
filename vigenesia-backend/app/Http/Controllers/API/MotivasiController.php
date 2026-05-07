@@ -11,7 +11,7 @@ class MotivasiController extends Controller
     // Menampilkan semua data motivasi (Beranda)
     public function index()
     {
-        $motivasi = Motivasi::with('user')->orderBy('id', 'desc')->get();
+        $motivasi = Motivasi::with(['user', 'kategori'])->orderBy('id', 'desc')->get();
         return response()->json(['data' => $motivasi]);
     }
 
@@ -19,12 +19,14 @@ class MotivasiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'isi_motivasi' => 'required|string'
+            'isi_motivasi' => 'required|string',
+            'kategori_id' => 'required|integer|exists:kategoris,id'
         ]);
 
         $motivasi = Motivasi::create([
             'isi_motivasi' => $request->isi_motivasi,
             'user_id' => $request->user()->id,   // Mengambil ID dari user yang sedang login
+            'kategori_id' => $request->kategori_id,
         ]);
 
         return response()->json([
@@ -56,6 +58,7 @@ class MotivasiController extends Controller
         }
 
         $motivasi->isi_motivasi = $request->isi_motivasi;
+        $motivasi->kategori_id = $request->kategori_id;
         $motivasi->save();
 
         return response()->json([
