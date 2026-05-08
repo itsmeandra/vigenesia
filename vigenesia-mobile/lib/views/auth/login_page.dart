@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vigenesia_mobile/views/home/home_page.dart';
+// import 'package:vigenesia_mobile/views/home/home_page.dart';
+import 'package:vigenesia_mobile/views/home/main_screen.dart';
 import '../../services/api_service.dart';
 
 class LoginPage extends StatefulWidget {
@@ -34,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
       ).showSnackBar(SnackBar(content: Text('Login Berhasil!')));
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => MainScreen()),
       );
     } else {
       // Jika gagal
