@@ -15,6 +15,17 @@ class MotivasiController extends Controller
         return response()->json(['data' => $motivasi]);
     }
 
+    public function userMotivasi(Request $request)
+{
+    // Mengambil motivasi yang user_id nya sesuai dengan ID user yang sedang login
+    $motivasi = Motivasi::with(['user', 'kategori'])
+                ->where('user_id', $request->user()->id)
+                ->orderBy('id', 'desc')
+                .get();
+
+    return response()->json(['data' => $motivasi]);
+}
+
     // Menyimpan motivasi baru
     public function store(Request $request)
     {
