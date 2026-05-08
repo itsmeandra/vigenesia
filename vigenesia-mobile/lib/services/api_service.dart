@@ -91,14 +91,18 @@ class ApiService {
         return true;
       }
       return false;
-      } catch (e) {
-        print('Error Create Motivasi: $e');
-        return false;
-      }
+    } catch (e) {
+      print('Error Create Motivasi: $e');
+      return false;
+    }
   }
 
   // Fungsi untuk mengubah/mengedit motivasi (PUT)
-  Future<bool> updateMotivasi(int id, String isiMotivasi, int kategoriId) async {
+  Future<bool> updateMotivasi(
+    int id,
+    String isiMotivasi,
+    int kategoriId,
+  ) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -166,6 +170,47 @@ class ApiService {
       return [];
     } catch (e) {
       print('Error Get Kategori: $e');
+      return [];
+    }
+  }
+
+  // Fungsi ambil data profil user yang sedang login
+  Future<Map<String, dynamic>?> getUserProfile() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await _dio.get(
+        '$baseUrl/user',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Fungsi ambil motivasi milik saya sendiri
+  Future<List<dynamic>> getMyMotivasi() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await _dio.get(
+        '$baseUrl/my-motivasi',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data['data'];
+      }
+      return [];
+    } catch (e) {
+      print('Error My Motivasi: $e');
       return [];
     }
   }
