@@ -15,6 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   final ApiService _apiService = ApiService();
 
   bool _isLoading = false;
+  bool _isObscurePassword = true;
 
   void _doLogin() async {
     setState(() {
@@ -88,11 +89,25 @@ class _LoginPageState extends State<LoginPage> {
               // Input Password
               TextField(
                 controller: _passwordController,
-                obscureText: true, // Sembunyikan teks (titik-titik)
+                obscureText:
+                    _isObscurePassword, // Sembunyikan teks (titik-titik)
                 decoration: InputDecoration(
                   labelText: "Password",
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isObscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isObscurePassword = !_isObscurePassword;
+                      });
+                    },
+                  ),
                 ),
               ),
               SizedBox(height: 24),
@@ -109,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               SizedBox(height: 16),
-              
+
               // Register
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

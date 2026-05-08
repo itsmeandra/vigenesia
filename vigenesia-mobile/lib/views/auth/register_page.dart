@@ -15,6 +15,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   final ApiService _apiService = ApiService();
   bool _isLoading = false;
+  bool _isObscurePassword = true;
 
   void _doRegister() async {
     // Validasi form kosong
@@ -101,11 +102,25 @@ class _RegisterPageState extends State<RegisterPage> {
             SizedBox(height: 16),
             TextField(
               controller: _passwordController,
-              obscureText: true,
+              obscureText: _isObscurePassword,
               decoration: InputDecoration(
                 labelText: "Password",
                 prefixIcon: Icon(Icons.lock),
                 border: OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _isObscurePassword
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    // Balikkan nilai boolean saat ikon ditekan
+                    setState(() {
+                      _isObscurePassword = !_isObscurePassword;
+                    });
+                  },
+                ),
               ),
             ),
             SizedBox(height: 24),
