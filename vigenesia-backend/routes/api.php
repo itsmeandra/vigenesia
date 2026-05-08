@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/motivasi', [MotivasiController::class, 'store']);
     Route::put('/motivasi/{id}', [MotivasiController::class, 'update']);
     Route::delete('/motivasi/{id}', [MotivasiController::class, 'destroy']);
+    Route::get('/my-motivasi', [MotivasiController::class, 'userMotivasi']);
 });
 
 Route::get('/kategori', [KategoriController::class, 'index']);
