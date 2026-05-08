@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vigenesia_mobile/views/auth/login_page.dart';
+import 'package:vigenesia_mobile/views/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: LoginPage(),
+      home: SplashScreen(),
     );
   }
 }
