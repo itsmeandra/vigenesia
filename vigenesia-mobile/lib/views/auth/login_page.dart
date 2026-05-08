@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vigenesia_mobile/views/auth/register_page.dart';
 // import 'package:vigenesia_mobile/views/home/home_page.dart';
 import 'package:vigenesia_mobile/views/home/main_screen.dart';
 import '../../services/api_service.dart';
@@ -96,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 24),
 
-              // Tombol Login
+              // Login
               SizedBox(
                 width: double.infinity,
                 height: 50,
@@ -106,6 +107,24 @@ class _LoginPageState extends State<LoginPage> {
                       ? CircularProgressIndicator(color: Colors.white)
                       : Text("LOGIN", style: TextStyle(fontSize: 18)),
                 ),
+              ),
+              SizedBox(height: 16),
+              
+              // Register
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Belum punya akun?"),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => RegisterPage()),
+                      );
+                    },
+                    child: Text("Daftar di sini"),
+                  ),
+                ],
               ),
             ],
           ),

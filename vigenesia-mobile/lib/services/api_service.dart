@@ -33,7 +33,39 @@ class ApiService {
     }
   }
 
-  // Fungsi untuk Logout (Menghapus token dari lokal)
+  Future<bool> register(
+    String nama,
+    String profesi,
+    String email,
+    String password,
+  ) async {
+    try {
+      final response = await _dio.post(
+        '$baseUrl/register',
+        data: {
+          'nama': nama,
+          'profesi': profesi,
+          'email': email,
+          'password': password,
+        },
+        options: Options(headers: {'Accept': 'application/json'}),
+      );
+
+      // Status 201 Created berarti data berhasil disimpan
+      if (response.statusCode == 201) {
+        String token = response.data['access'];
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', token);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('Error Register: $e');
+      return false;
+    }
+  }
+
+  // Fungsi Logout (Menghapus token dari lokal)
   Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
