@@ -411,6 +411,12 @@ class _HomePageState extends State<HomePage> {
                                 );
                               },
                             ),
+                            Text(
+                              motivasi['reposts'] != null
+                                  ? "${motivasi['reposts'].length}"
+                                  : "0",
+                              style: TextStyle(color: Colors.grey.shade600),
+                            ),
                           ],
                         ),
                       ],
