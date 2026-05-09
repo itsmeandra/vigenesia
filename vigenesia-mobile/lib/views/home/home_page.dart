@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import 'package:vigenesia_mobile/services/api_service.dart';
 import 'package:vigenesia_mobile/views/auth/login_page.dart';
 import 'package:vigenesia_mobile/views/home/add_motivasi_page.dart';
@@ -17,8 +18,12 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // Memanggil API saat halaman pertama kali dibuka
-    _motivasiList = _apiService.getMotivasi();
+    timeago.setLocaleMessages(
+      'id',
+      timeago.IdMessages(),
+    ); // Tambahkan baris ini agar formatnya "5 menit yang lalu", bukan "5 minutes ago"
+    _motivasiList = _apiService
+        .getMotivasi(); // Memanggil API saat halaman pertama kali dibuka
     _refreshData();
     _fetchMyUserId();
     _inisialisasiAwal();
@@ -138,241 +143,282 @@ class _HomePageState extends State<HomePage> {
             );
           }
 
-          return ListView.builder(
-            padding: EdgeInsets.all(10),
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              var motivasi = snapshot.data![index];
+          return RefreshIndicator(
+            onRefresh: () async {
+              _refreshData();
+              // Beri sedikit jeda 1 detik agar animasi putarannya terlihat natural
+              await Future.delayed(Duration(seconds: 1));
+            },
+            child: ListView.builder(
+              padding: EdgeInsets.all(10),
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                var motivasi = snapshot.data![index];
 
-              // LOGIKA DETEKSI TIPE POSTINGAN
-              bool isRepost =
-                  motivasi['parent_id'] != null && motivasi['parent'] != null;
-              String? isiText = motivasi['isi_motivasi']?.toString();
-              bool hasQuote = isiText != null && isiText.trim().isNotEmpty;
-             
-              bool isMyPost = motivasi['user_id'] == _myUserId;
+                // LOGIKA DETEKSI TIPE POSTINGAN
+                bool isRepost =
+                    motivasi['parent_id'] != null && motivasi['parent'] != null;
+                String? isiText = motivasi['isi_motivasi']?.toString();
+                bool hasQuote = isiText != null && isiText.trim().isNotEmpty;
 
-              var targetPost = (isRepost && !hasQuote)
-                  ? motivasi['parent']
-                  : motivasi;
+                bool isMyPost = motivasi['user_id'] == _myUserId;
 
-              String namaPenulis = targetPost['user'] != null
-                  ? targetPost['user']['nama']
-                  : 'Anonim';
-              String namaKategori = targetPost['kategori'] != null
-                  ? targetPost['kategori']['nama_kategori']
-                  : 'Umum';
+                var targetPost = (isRepost && !hasQuote)
+                    ? motivasi['parent']
+                    : motivasi;
 
-              return Card(
-                margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // HEADER REPOST MURNI ("Anda me-repost")
-                      if (isRepost && !hasQuote)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.repeat,
-                                size: 16,
-                                color: Colors.grey.shade600,
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                isMyPost
-                                    ? "Anda me-repost"
-                                    : "${motivasi['user'] != null ? motivasi['user']['nama'] : 'Seseorang'} me-repost",
-                                style: TextStyle(
+                String namaPenulis = targetPost['user'] != null
+                    ? targetPost['user']['nama']
+                    : 'Anonim';
+                // String namaKategori = targetPost['kategori'] != null
+                //     ? targetPost['kategori']['nama_kategori']
+                //     : 'Umum';
+
+                DateTime createdAt = targetPost['created_at'] != null
+                    ? DateTime.parse(targetPost['created_at'])
+                    : DateTime.now();
+
+                String timeAgo = timeago.format(createdAt, locale: 'id');
+
+                return Card(
+                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // HEADER REPOST MURNI ("Anda me-repost")
+                        if (isRepost && !hasQuote)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.repeat,
+                                  size: 16,
                                   color: Colors.grey.shade600,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                      // HEADER QUOTE TWEET (Jika user mengisi teks tambahan)
-                      if (isRepost && hasQuote)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                motivasi['user'] != null
-                                    ? motivasi['user']['nama']
-                                    : 'Anonim',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
+                                SizedBox(width: 8),
+                                Text(
+                                  isMyPost
+                                      ? "Anda me-repost"
+                                      : "${motivasi['user'] != null ? motivasi['user']['nama'] : 'Seseorang'} me-repost",
+                                  style: TextStyle(
+                                    color: Colors.grey.shade600,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                motivasi['isi_motivasi'],
-                                style: TextStyle(fontSize: 15),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
 
-                      // KONTEN UTAMA (Motivasi Asli)
-                      Container(
-                        width: double.infinity,
-                        padding: isRepost && hasQuote
-                            ? EdgeInsets.all(12)
-                            : EdgeInsets.zero,
-                        // Buat kotak bergaris HANYA JIKA ini Quote Tweet
-                        decoration: isRepost && hasQuote
-                            ? BoxDecoration(
-                                border: Border.all(color: Colors.grey.shade300),
-                                borderRadius: BorderRadius.circular(12),
-                              )
-                            : null,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Nama Penulis Asli di dalam kotak Quote
-                            if (isRepost && hasQuote)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 4.0),
-                                child: Row(
+                        // HEADER QUOTE TWEET (Jika user mengisi teks tambahan)
+                        if (isRepost && hasQuote)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
                                   children: [
                                     Icon(
                                       Icons.person,
-                                      size: 14,
+                                      size: 16,
                                       color: Colors.grey,
                                     ),
-                                    SizedBox(width: 6),
-                                    Text(
-                                      motivasi['parent']['user'] != null
-                                          ? motivasi['parent']['user']['nama']
-                                          : 'Anonim',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 13,
+                                    SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        motivasi['user'] != null
+                                            ? motivasi['user']['nama']
+                                            : 'Anonim',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
-                              ),
-
-                            Text(
-                              isRepost && hasQuote
-                                  ? motivasi['parent']['isi_motivasi']
-                                  : targetPost['isi_motivasi'],
-                              style: TextStyle(
-                                fontWeight: isRepost && hasQuote
-                                    ? FontWeight.normal
-                                    : FontWeight.bold,
-                                fontSize: 16,
-                              ),
+                                SizedBox(height: 4),
+                                Text(
+                                  motivasi['isi_motivasi'],
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 6),
+                          ),
 
-                            // Keterangan Penulis & Kategori (Sembunyikan dari dalam kotak Quote)
-                            if (!isRepost || !hasQuote)
+                        // KONTEN UTAMA (Motivasi Asli)
+                        Container(
+                          width: double.infinity,
+                          padding: isRepost && hasQuote
+                              ? EdgeInsets.all(12)
+                              : EdgeInsets.zero,
+                          // Buat kotak bergaris HANYA JIKA ini Quote Tweet
+                          decoration: isRepost && hasQuote
+                              ? BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                )
+                              : null,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Nama Penulis Asli di dalam kotak Quote
+                              if (isRepost && hasQuote)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 4.0),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.person,
+                                        size: 14,
+                                        color: Colors.grey,
+                                      ),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        motivasi['parent']['user'] != null
+                                            ? motivasi['parent']['user']['nama']
+                                            : 'Anonim',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
                               Text(
-                                "Oleh: $namaPenulis • $namaKategori",
+                                isRepost && hasQuote
+                                    ? motivasi['parent']['isi_motivasi']
+                                    : targetPost['isi_motivasi'],
                                 style: TextStyle(
-                                  color: Colors.grey.shade600,
-                                  fontSize: 12,
+                                  fontWeight: isRepost && hasQuote
+                                      ? FontWeight.normal
+                                      : FontWeight.bold,
+                                  fontSize: 16,
                                 ),
                               ),
+                              SizedBox(height: 6),
+
+                              // Keterangan Penulis & Kategori (Sembunyikan dari dalam kotak Quote)
+                              if (!isRepost || !hasQuote)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 4.0),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.person,
+                                        size: 14,
+                                        color: Colors.grey,
+                                      ),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        "$namaPenulis • $timeAgo",
+                                        style: TextStyle(
+                                          color: Colors.grey.shade600,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(height: 12),
+
+                        // Button Like n Repost
+                        Row(
+                          children: [
+                            Builder(
+                              builder: (context) {
+                                bool isLiked = false;
+                                if (_myUserId != null &&
+                                    motivasi['likes'] != null) {
+                                  isLiked = motivasi['likes'].any(
+                                    (like) => like['id'] == _myUserId,
+                                  );
+                                }
+                                return IconButton(
+                                  icon: Icon(
+                                    isLiked
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: isLiked ? Colors.red : Colors.grey,
+                                  ),
+                                  onPressed: () async {
+                                    int motivasiId = int.parse(
+                                      motivasi['id'].toString(),
+                                    );
+                                    await _apiService.toggleLike(motivasiId);
+                                    _refreshData();
+                                  },
+                                );
+                              },
+                            ),
+                            Text(
+                              motivasi['likes'] != null
+                                  ? "${motivasi['likes'].length}"
+                                  : "0",
+                            ),
+                            SizedBox(width: 16),
+                            Builder(
+                              builder: (context) {
+                                bool isRepostedByMe = false;
+                                if (_myUserId != null &&
+                                    snapshot.data != null) {
+                                  List<dynamic> allPosts = snapshot.data!;
+                                  isRepostedByMe = allPosts.any(
+                                    (post) =>
+                                        post['parent_id'] == motivasi['id'] &&
+                                        post['user_id'] == _myUserId,
+                                  );
+                                }
+                                return IconButton(
+                                  icon: Icon(
+                                    Icons.repeat,
+                                    color: isRepostedByMe
+                                        ? Colors.blue
+                                        : Colors.grey,
+                                  ),
+                                  onPressed: () async {
+                                    int motivasiId = int.parse(
+                                      motivasi['id'].toString(),
+                                    );
+                                    if (isRepostedByMe) {
+                                      bool ok = await _apiService.repost(
+                                        motivasiId,
+                                        null,
+                                      );
+                                      if (ok) {
+                                        _refreshData();
+                                      }
+                                    } else {
+                                      _showRepostDialog(motivasiId);
+                                    }
+                                  },
+                                );
+                              },
+                            ),
                           ],
                         ),
-                      ),
-
-                      SizedBox(height: 12),
-
-                      // Button Like n Repost
-                      Row(
-                        children: [
-                          Builder(
-                            builder: (context) {
-                              bool isLiked = false;
-                              if (_myUserId != null &&
-                                  motivasi['likes'] != null) {
-                                isLiked = motivasi['likes'].any(
-                                  (like) => like['id'] == _myUserId,
-                                );
-                              }
-                              return IconButton(
-                                icon: Icon(
-                                  isLiked
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color: isLiked ? Colors.red : Colors.grey,
-                                ),
-                                onPressed: () async {
-                                  int motivasiId = int.parse(
-                                    motivasi['id'].toString(),
-                                  );
-                                  await _apiService.toggleLike(motivasiId);
-                                  _refreshData();
-                                },
-                              );
-                            },
-                          ),
-                          Text(
-                            motivasi['likes'] != null
-                                ? "${motivasi['likes'].length}"
-                                : "0",
-                          ),
-                          SizedBox(width: 16),
-                          Builder(
-                            builder: (context) {
-                              bool isRepostedByMe = false;
-                              if (_myUserId != null && snapshot.data != null) {
-                                List<dynamic> allPosts = snapshot.data!;
-                                isRepostedByMe = allPosts.any(
-                                  (post) =>
-                                      post['parent_id'] == motivasi['id'] &&
-                                      post['user_id'] == _myUserId,
-                                );
-                              }
-                              return IconButton(
-                                icon: Icon(
-                                  Icons.repeat,
-                                  color: isRepostedByMe
-                                      ? Colors.blue
-                                      : Colors.grey,
-                                ),
-                                onPressed: () async {
-                                  int motivasiId = int.parse(
-                                    motivasi['id'].toString(),
-                                  );
-                                  if (isRepostedByMe) {
-                                    bool ok = await _apiService.repost(
-                                      motivasiId,
-                                      null,
-                                    );
-                                    if (ok) {
-                                      _refreshData();
-                                    }
-                                  } else {
-                                    _showRepostDialog(motivasiId);
-                                  }
-                                },
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           );
         },
       ),
