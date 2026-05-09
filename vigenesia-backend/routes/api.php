@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\MotivasiController;
 use App\Http\Controllers\API\KategoriController;
+use App\Http\Controllers\API\InteraksiController;
 
 // ROUTE PUBLIC (Tidak perlu login / token)
 Route::post('/register', [AuthController::class, 'register']);
@@ -26,6 +27,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/motivasi', [MotivasiController::class, 'store']);
     Route::put('/motivasi/{id}', [MotivasiController::class, 'update']);
     Route::delete('/motivasi/{id}', [MotivasiController::class, 'destroy']);
+    Route::post('/motivasi/{id}/like', [InteraksiController::class, 'toggleLike']);
+    Route::post('/motivasi/{id}/repost', [InteraksiController::class, 'repost']);
     Route::get('/my-motivasi', [MotivasiController::class, 'userMotivasi']);
 });
 
