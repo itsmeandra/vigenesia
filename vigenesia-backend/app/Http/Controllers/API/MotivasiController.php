@@ -11,7 +11,9 @@ class MotivasiController extends Controller
     // Menampilkan semua data motivasi (Beranda)
     public function index()
     {
-        $motivasi = Motivasi::with(['user', 'kategori'])->orderBy('id', 'desc')->get();
+        $motivasi = Motivasi::with(['user', 'kategori', 'likes', 'parent', 'parent.user'])
+        ->orderBy('id', 'desc')
+        ->get();
         return response()->json(['data' => $motivasi]);
     }
 
@@ -21,7 +23,7 @@ class MotivasiController extends Controller
     $motivasi = Motivasi::with(['user', 'kategori'])
                 ->where('user_id', $request->user()->id)
                 ->orderBy('id', 'desc')
-                .get();
+                ->get();
 
     return response()->json(['data' => $motivasi]);
 }
