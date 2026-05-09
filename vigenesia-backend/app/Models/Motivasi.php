@@ -40,4 +40,8 @@ class Motivasi extends Model
     {
         return $this->belongsTo(Motivasi::class, 'parent_id')->with('user');
     }
+
+    public function reposts() {
+        return $this->hasMany(Motivasi::class, 'parent_id');
+    }
 }
