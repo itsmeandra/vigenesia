@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens; // Penting untuk API Login
+use App\Models\Motivasi;
 
 class User extends Authenticatable
 {
@@ -50,7 +51,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Motivasi::class);
     }
-    
+
+    // Relasi: User memiliki banyak likes
+    public function likes() {
+        return $this->belongsToMany(Motivasi::class, 'likes');
+    }
 
     /**
      * Get the attributes that should be cast.

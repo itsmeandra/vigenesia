@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Motivasi extends Model
 {
@@ -15,6 +16,7 @@ class Motivasi extends Model
         'isi_motivasi',
         'user_id',
         'kategori_id',
+        'parent_id',
     ];
 
     // Relasi: Motivasi dimiliki oleh satu User
@@ -27,5 +29,15 @@ class Motivasi extends Model
     public function kategori()
     {
         return $this->belongsTo(Kategori::class);
+    }
+
+    public function likes() 
+    {
+        return $this->belongsToMany(User::class, 'likes');
+    }
+
+    public function parent() 
+    {
+        return $this->belongsTo(Motivasi::class, 'parent_id')->with('user');
     }
 }
