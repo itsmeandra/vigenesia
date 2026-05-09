@@ -246,4 +246,38 @@ class ApiService {
       return [];
     }
   }
+
+  // Fungsi Like/Unlike
+  Future<void> toggleLike(int id) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      await _dio.post(
+        '$baseUrl/motivasi/$id/like',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } catch (e) {
+      // Tips: tambahkan print untuk debug error 500
+      if (e is DioException) {
+        print('Pesan: ${e.response?.data}');
+      }
+      rethrow; // atau handle sesuai kebutuhan
+    }
+  }
+
+  // Fungsi Repost
+  Future<bool> repost(int id, String? quote) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final response = await _dio.post(
+        '$baseUrl/motivasi/$id/repost',
+        data: {'isi_motivasi': quote},
+        options: Options(headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json',}),
+      );
+      return response.statusCode == 201 || response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
 }
