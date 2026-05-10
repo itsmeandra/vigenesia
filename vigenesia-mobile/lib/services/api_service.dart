@@ -273,11 +273,41 @@ class ApiService {
       final response = await _dio.post(
         '$baseUrl/motivasi/$id/repost',
         data: {'isi_motivasi': quote},
-        options: Options(headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json',}),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+        ),
       );
       return response.statusCode == 201 || response.statusCode == 200;
     } catch (e) {
       return false;
+    }
+  }
+
+  // Fungsi ambil motivasi yang saya LIKE
+  Future<List<dynamic>> getLikedMotivasi() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await _dio.get(
+        '$baseUrl/liked-motivasi',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data['data'];
+      }
+      return [];
+    } catch (e) {
+      return [];
     }
   }
 }
