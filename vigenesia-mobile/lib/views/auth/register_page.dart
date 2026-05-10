@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vigenesia_mobile/services/api_service.dart';
+import 'package:vigenesia_mobile/views/auth/login_page.dart';
 import 'package:vigenesia_mobile/views/home/main_screen.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -62,79 +63,187 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Daftar Akun Baru'),
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.blue,
-      ),
+      // appBar: AppBar(
+      //   title: Text('Daftar Akun Baru'),
+      //   elevation: 0,
+      //   backgroundColor: Colors.white,
+      //   foregroundColor: Colors.blue,
+      // ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(24.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _namaController,
-              decoration: InputDecoration(
-                labelText: "Nama Lengkap",
-                prefixIcon: Icon(Icons.person),
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: _profesiController,
-              decoration: InputDecoration(
-                labelText: "Profesi",
-                prefixIcon: Icon(Icons.work),
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: "Email",
-                prefixIcon: Icon(Icons.email),
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              obscureText: _isObscurePassword,
-              decoration: InputDecoration(
-                labelText: "Password",
-                prefixIcon: Icon(Icons.lock),
-                border: OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isObscurePassword
-                        ? Icons.visibility_off
-                        : Icons.visibility,
-                    color: Colors.grey,
-                  ),
-                  onPressed: () {
-                    // Balikkan nilai boolean saat ikon ditekan
-                    setState(() {
-                      _isObscurePassword = !_isObscurePassword;
-                    });
-                  },
+
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 32.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                "Vigenesia",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF0050CB),
                 ),
               ),
-            ),
-            SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _doRegister,
-                child: _isLoading
-                    ? CircularProgressIndicator(color: Colors.white)
-                    : Text("DAFTAR SEKARANG", style: TextStyle(fontSize: 18)),
+              SizedBox(height: 8),
+              Text(
+                "Visi Generasi Indonesia",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, color: Color(0xFF424656)),
               ),
-            ),
-          ],
+              SizedBox(height: 40),
+              Text(
+                "Buat Akun",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF1F2937),
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                "Lengkap data diri Anda untuk memulai",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: Color(0xFF424656)),
+              ),
+              SizedBox(height: 32),
+
+              // Nama
+              TextField(
+                controller: _namaController,
+                decoration: InputDecoration(
+                  labelText: "Nama",
+                  hintText: "Nama Lengkap",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  prefixIcon: const Icon(Icons.person_outline),
+                  filled: true,
+                  fillColor: Colors.grey.shade50,
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Profesi
+              TextField(
+                controller: _profesiController,
+                decoration: InputDecoration(
+                  labelText: "Profesi",
+                  hintText: "Contoh: Mahasiswa",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  prefixIcon: const Icon(Icons.work_outline),
+                  filled: true,
+                  fillColor: Colors.grey.shade50,
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Email
+              TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  labelText: "Email",
+                  hintText: "Noa@email.com",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  prefixIcon: const Icon(Icons.email_outlined),
+                  filled: true,
+                  fillColor: Colors.grey.shade50,
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Password field
+              TextField(
+                controller: _passwordController,
+                obscureText: _isObscurePassword,
+                decoration: InputDecoration(
+                  labelText: "Password",
+                  hintText: "Min. 8 Karakter",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isObscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      setState(() => _isObscurePassword = !_isObscurePassword);
+                    },
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey.shade50,
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              // Register button
+              SizedBox(
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _doRegister,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0050CB),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 2,
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text(
+                          "Register",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Login link
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "Sudah punya akun?",
+                    style: TextStyle(color: Color(0xFF1F2937)),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                      );
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: const Color(0xFF0050CB),
+                    ),
+                    child: const Text("Login di sini"),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
