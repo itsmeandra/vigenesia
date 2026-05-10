@@ -10,7 +10,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -27,34 +26,50 @@ class _SplashScreenState extends State<SplashScreen> {
 
     // Jika token ada, arahkan langsung ke MainScreen. Jika tidak, ke LoginPage.
     if (token != null) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen()));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainScreen()),
+      );
     } else {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue, // Warna background layar
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Bisa diganti dengan Image.asset('path/ke/logo.png') nanti jika punya logo
-            Icon(Icons.lightbulb_outline, size: 100, color: Colors.white), 
-            SizedBox(height: 20),
+            Image.asset(
+              'assets/images/logo.png',
+              width: 230,
+              height: 230,
+              fit: BoxFit.contain,
+            ),
+            SizedBox(height: 10),
             Text(
               "ViGeNesia",
-              style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF0050CB),
+              ),
             ),
             SizedBox(height: 10),
             Text(
               "Visi Generasi Indonesia",
-              style: TextStyle(fontSize: 16, color: Colors.white70),
+              style: TextStyle(fontSize: 16, color: Color(0xFF424656)),
             ),
             SizedBox(height: 50),
-            CircularProgressIndicator(color: Colors.white), // Animasi loading
+            CircularProgressIndicator(
+              color: Color(0xFF2C3E50),
+            ), // Animasi loading
           ],
         ),
       ),
