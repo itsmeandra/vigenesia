@@ -58,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
               style: TextStyle(
                 fontSize: 40,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF0050CB),
+                color: Color(0xFFD4840C),
               ),
             ),
             SizedBox(height: 10),
