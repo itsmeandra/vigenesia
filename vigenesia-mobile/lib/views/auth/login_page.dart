@@ -66,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF0050CB),
+                  color: Color(0xFFD4840C),
                 ),
               ),
               SizedBox(height: 8),
@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF1F2937),
+                  color: Color.fromARGB(158, 82, 51, 5),
                 ),
               ),
 
@@ -139,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _doLogin,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF0050CB),
+                    backgroundColor: Color(0xFFD4840C),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -182,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
                       );
                     },
                     style: TextButton.styleFrom(
-                      foregroundColor: const Color(0xFF0050CB),
+                      foregroundColor: const Color(0xFFD4840C),
                     ),
                     child: Text("Daftar di sini"),
                   ),
