@@ -19,13 +19,24 @@ class MotivasiController extends Controller
 
     public function userMotivasi(Request $request)
     {
-    // Mengambil motivasi yang user_id nya sesuai dengan ID user yang sedang login
     $motivasi = Motivasi::with(['user', 'kategori', 'likes', 'parent', 'parent.user', 'reposts'])
-                ->where('user_id', $request->user()->id)
-                ->orderBy('id', 'desc')
-                ->get();
+        ->where('user_id', $request->user()->id)
+        ->orderBy('id', 'desc')
+        ->get();
 
     return response()->json(['data' => $motivasi]);
+    }
+
+    public function likedMotivasi(Request $request)
+    {
+        $motivasi = Motivasi::whereHas('likes', function ($query) use ($request) {
+            $query->where('user_id', $request->user()->id);
+        })
+        ->with(['user', 'kategori', 'likes', 'reposts', 'parent', 'parent.user'])
+        ->orderBy('id', 'desc')
+        ->get();
+
+        return response()->json(['data' => $motivasi]);
     }
 
     // Menyimpan motivasi baru

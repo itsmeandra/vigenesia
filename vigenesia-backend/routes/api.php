@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/motivasi/{id}/like', [InteraksiController::class, 'toggleLike']);
     Route::post('/motivasi/{id}/repost', [InteraksiController::class, 'repost']);
     Route::get('/my-motivasi', [MotivasiController::class, 'userMotivasi']);
+    Route::get('/liked-motivasi', [MotivasiController::class, 'likedMotivasi']);
 });
 
 Route::get('/kategori', [KategoriController::class, 'index']);
