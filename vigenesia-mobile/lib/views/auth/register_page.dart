@@ -63,12 +63,6 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Daftar Akun Baru'),
-      //   elevation: 0,
-      //   backgroundColor: Colors.white,
-      //   foregroundColor: Colors.blue,
-      // ),
       backgroundColor: Colors.white,
 
       body: SafeArea(
@@ -83,7 +77,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 style: TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF0050CB),
+                  color: Color(0xFFD4840C),
                 ),
               ),
               SizedBox(height: 8),
@@ -193,7 +187,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _doRegister,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0050CB),
+                    backgroundColor: const Color(0xFFD4840C),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -236,7 +230,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       );
                     },
                     style: TextButton.styleFrom(
-                      foregroundColor: const Color(0xFF0050CB),
+                      foregroundColor: const Color(0xFFD4840C),
                     ),
                     child: const Text("Login di sini"),
                   ),
