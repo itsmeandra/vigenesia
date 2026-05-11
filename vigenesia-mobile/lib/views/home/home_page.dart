@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:vigenesia_mobile/services/api_service.dart';
+import 'package:vigenesia_mobile/views/home/profile_page.dart';
 import 'package:vigenesia_mobile/widgets/settings_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,6 +18,7 @@ class _HomePageState extends State<HomePage> {
   // Konstanta Warna Tema
   final Color primaryOrange = Color(0xFFD4840C); // Warna Vigenesia
   final Color fireColor = Color(0xFFD9381E); // Warna Api Like
+  String? _myName;
 
   @override
   void initState() {
@@ -33,9 +35,20 @@ class _HomePageState extends State<HomePage> {
     if (user != null && mounted) {
       setState(() {
         _myUserId = user['id'];
+        _myName = user['nama'];
       });
     }
     _refreshData();
+  }
+
+  String _getInitials(String? name) {
+    if (name == null || name.trim().isEmpty) return "?";
+    List<String> nameParts = name.trim().split(RegExp(r'\s+'));
+    if (nameParts.length > 1) {
+      return (nameParts[0][0] + nameParts[1][0]).toUpperCase();
+    } else {
+      return nameParts[0][0].toUpperCase();
+    }
   }
 
   void _refreshData() async {
@@ -114,12 +127,24 @@ class _HomePageState extends State<HomePage> {
         elevation: 0.5, // Garis bayangan tipis di bawah AppBar
         leading: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.grey.shade200,
-            backgroundImage: NetworkImage(
-              'https://i.pravatar.cc/150?img=11',
-            ), // Dummy Avatar
-            child: Icon(Icons.person, color: Colors.grey),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfilePage()),
+              );
+            },
+            child: CircleAvatar(
+              backgroundColor: Colors.grey.shade200,
+              child: Text(
+                _getInitials(_myName),
+                style: TextStyle(
+                  color: primaryOrange,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ),
           ),
         ),
         title: Text(
