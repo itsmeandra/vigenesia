@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:vigenesia_mobile/services/api_service.dart';
-import 'package:vigenesia_mobile/views/auth/login_page.dart';
 import 'package:vigenesia_mobile/views/home/edit_motivasi_page.dart';
+import 'package:vigenesia_mobile/views/home/edit_profile_page.dart';
 import 'package:vigenesia_mobile/widgets/settings_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -25,20 +25,27 @@ class _ProfilePageState extends State<ProfilePage> {
   final Color primaryOrange = Color(0xFFD4840C);
   final Color fireColor = Color(0xFFD9381E);
 
+  // Fungsi untuk mengambil inisial nama
+  String _getInitials(String? name) {
+    if (name == null || name.trim().isEmpty) return "?";
+
+    // Pecah nama berdasarkan spasi
+    List<String> nameParts = name.trim().split(RegExp(r'\s+'));
+
+    if (nameParts.length > 1) {
+      // Ambil huruf pertama dari kata pertama dan kedua (contoh: Full Name -> FN)
+      return (nameParts[0][0] + nameParts[1][0]).toUpperCase();
+    } else {
+      // Jika hanya satu kata (contoh: Name -> N)
+      return nameParts[0][0].toUpperCase();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     timeago.setLocaleMessages('id', timeago.IdMessages());
     _loadData();
-  }
-
-  void _doLogout() async {
-    await _apiService.logout();
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => LoginPage()),
-      (route) => false,
-    );
   }
 
   void _loadData() async {
@@ -485,8 +492,15 @@ class _ProfilePageState extends State<ProfilePage> {
                   CircleAvatar(
                     radius: 45,
                     backgroundColor: Colors.grey.shade200,
-                    backgroundImage: NetworkImage(
-                      'https://i.pravatar.cc/150?img=11',
+                    child: Text(
+                      _getInitials(
+                        _userData?['nama'],
+                      ), // Panggil fungsi inisial
+                      style: TextStyle(
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        color: primaryOrange, // Warna teks inisial
+                      ),
                     ),
                   ),
                   SizedBox(height: 10),
@@ -570,7 +584,16 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: double.infinity,
                       height: 40,
                       child: OutlinedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          final res = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  EditProfilePage(userData: _userData!),
+                            ),
+                          );
+                          if (res == true) _loadData();
+                        },
                         style: OutlinedButton.styleFrom(
                           backgroundColor: primaryOrange,
                           side: BorderSide(color: primaryOrange),
