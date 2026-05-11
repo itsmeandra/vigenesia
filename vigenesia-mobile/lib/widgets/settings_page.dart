@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vigenesia_mobile/services/api_service.dart';
 import 'package:vigenesia_mobile/views/auth/login_page.dart';
-import 'package:vigenesia_mobile/main.dart'; // Import ini wajib agar bisa memanggil themeNotifier
 
 class SettingsPage extends StatelessWidget {
   final ApiService _apiService = ApiService();
