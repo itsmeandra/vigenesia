@@ -310,4 +310,31 @@ class ApiService {
       return [];
     }
   }
+
+  Future<bool> updateProfile(String nama, String profesi) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final response = await _dio.post(
+        '$baseUrl/user/update',
+        data: {"nama": nama, "profesi": profesi},
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      if (e is DioException) {
+        print("ERROR DARI LARAVEL: ${e.response?.data}");
+        print("STATUS CODE: ${e.response?.statusCode}");
+      } else {
+        print("ERROR FLUTTER: $e");
+      }
+      return false;
+    }
+  }
 }
