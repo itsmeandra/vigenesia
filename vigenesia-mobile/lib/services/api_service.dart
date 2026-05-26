@@ -6,7 +6,7 @@ class ApiService {
 
   // PENTING: Gunakan 10.0.2.2 jika pakai Emulator Android.
   // Jika pakai HP asli, gunakan IP WiFi laptop kamu (misal: 192.168.1.x)
-  final String baseUrl = 'http://10.0.2.2:8000/api';
+  final String baseUrl = 'https://isochimal-daniela-turbidly.ngrok-free.dev/api';
 
   // Fungsi Login
   Future<bool> login(String email, String password) async {
@@ -85,6 +85,7 @@ class ApiService {
             'Accept': 'application/json',
             // Jika rute GET /motivasi di Laravel kamu masukkan ke dalam auth:sanctum, aktifkan baris ini:
             'Authorization': 'Bearer $token',
+            'ngrok-skip-browser-warning': 'true',
           },
         ),
       );
@@ -311,17 +312,18 @@ class ApiService {
     }
   }
 
-  Future<bool> updateProfile(String nama, String profesi) async {
+  Future<bool> updateProfile(String nama, String bio) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       final response = await _dio.post(
         '$baseUrl/user/update',
-        data: {"nama": nama, "profesi": profesi},
+        data: {"nama": nama, "bio": bio},
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
             'Accept': 'application/json',
+            'ngrok-skip-browser-warning': 'true',
           },
         ),
       );
