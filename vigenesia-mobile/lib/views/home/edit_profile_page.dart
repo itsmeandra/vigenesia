@@ -12,7 +12,7 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfilePageState extends State<EditProfilePage> {
   final ApiService _apiService = ApiService();
   late TextEditingController _namaController;
-  late TextEditingController _profesiController;
+  late TextEditingController _bioController;
 
   bool _isLoading = false;
 
@@ -20,9 +20,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void initState() {
     super.initState();
     _namaController = TextEditingController(text: widget.userData['nama']);
-    _profesiController = TextEditingController(
-      text: widget.userData['profesi'] ?? '',
-    );
+    _bioController = TextEditingController(text: widget.userData['bio'] ?? '');
   }
 
   void _saveProfile() async {
@@ -30,7 +28,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     bool success = await _apiService.updateProfile(
       _namaController.text,
-      _profesiController.text,
+      _bioController.text,
     );
 
     setState(() => _isLoading = false);
@@ -136,9 +134,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
             // Form Bio
             TextField(
-              controller: _profesiController,
+              controller: _bioController,
               decoration: InputDecoration(
-                labelText: "Bio / Profesi",
+                labelText: "Bio",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
