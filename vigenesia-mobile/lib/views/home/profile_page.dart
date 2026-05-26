@@ -45,30 +45,25 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     timeago.setLocaleMessages('id', timeago.IdMessages());
+    _myMotivasi = _apiService.getMyMotivasi();
+    _likedMotivasi = _apiService.getLikedMotivasi();
     _loadData();
   }
 
-  void _loadData() async {
-    final user = await _apiService.getUserProfile();
-    final motivasi = _apiService.getMyMotivasi();
-    final liked = _apiService
-        .getLikedMotivasi(); // Mengambil data postingan yang di-like
-
-    // Hitung jumlah post secara asinkron
-    motivasi.then((data) {
+  void _loadData() {
+    _myMotivasi.then((data) {
       if (mounted) setState(() => _postCount = data.length);
     });
-
-    // Hitung jumlah like secara asinkron untuk statistik profil
-    liked.then((data) {
+    _likedMotivasi.then((data) {
       if (mounted) setState(() => _likeCount = data.length);
     });
-
-    setState(() {
-      _userData = user;
-      _myUserId = user?['id'];
-      _myMotivasi = motivasi;
-      _likedMotivasi = liked;
+    _apiService.getUserProfile().then((user) {
+      if (mounted) {
+        setState(() {
+          _userData = user;
+          _myUserId = user?['id'];
+        });
+      }
     });
   }
 
