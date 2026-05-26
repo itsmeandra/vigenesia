@@ -511,8 +511,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40.0),
                     child: Text(
-                      _userData?['profesi'] ??
-                          "Membangun Indonesia melalui visi dan motivasi.",
+                      _userData?['bio'] ??
+                          "Belum ada bio.",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.grey.shade600,
