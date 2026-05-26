@@ -75,4 +75,28 @@ class AuthController extends Controller
             'message' => 'Logout sukses, token dihapus'
         ]);
     }
+
+    public function updateProfile(Request $request)
+    {
+    // 1. Ambil data user yang sedang login melalui token Sanctum
+    $user = $request->user();
+
+    // 2. Validasi input dari Flutter
+    $request->validate([
+        'nama' => 'required|string|max:255',
+        'bio'  => 'nullable|string|max:255',
+    ]);
+
+    // 3. Isi data baru ke dalam database
+    $user->nama = $request->nama;
+    $user->bio = $request->bio;
+    $user->save();
+
+    // 4. Kembalikan respons sukses berupa JSON ke Flutter
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Profil berhasil diperbarui',
+        'data' => $user
+    ], 200);
+    }
 }
