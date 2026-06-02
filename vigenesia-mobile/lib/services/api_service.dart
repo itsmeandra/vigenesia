@@ -6,7 +6,15 @@ class ApiService {
 
   // PENTING: Gunakan 10.0.2.2 jika pakai Emulator Android.
   // Jika pakai HP asli, gunakan IP WiFi laptop kamu (misal: 192.168.1.x)
-  final String baseUrl = 'https://isochimal-daniela-turbidly.ngrok-free.dev/api';
+  final String baseUrl =
+      'https://ngrok.com/api';
+
+  ApiService() {
+    _dio.options.headers = {
+      'Accept': 'application/json',
+      'ngrok-skip-browser-warning': 'true',
+    };
+  }
 
   // Fungsi Login
   Future<bool> login(String email, String password) async {
