@@ -32,6 +32,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/my-motivasi', [MotivasiController::class, 'userMotivasi']);
     Route::get('/liked-motivasi', [MotivasiController::class, 'likedMotivasi']);
     Route::post('/user/update', [AuthController::class, 'updateProfile']);
+    Route::post('/motivasi/{id}/save', [MotivasiController::class, 'toggleSave']);
+    Route::get('/saved-motivasi', [MotivasiController::class, 'getSavedMotivasi']);
 });
 
 Route::get('/kategori', [KategoriController::class, 'index']);
