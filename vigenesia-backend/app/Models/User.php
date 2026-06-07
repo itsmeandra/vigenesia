@@ -58,6 +58,12 @@ class User extends Authenticatable
         return $this->belongsToMany(Motivasi::class, 'likes');
     }
 
+    // Relasi untuk postingan yang disimpan (bookmark)
+    public function savedMotivasi()
+    {
+        return $this->belongsToMany(Motivasi::class, 'bookmarks', 'user_id', 'motivasi_id')->withTimestamps();
+    }
+
     /**
      * Get the attributes that should be cast.
      *
