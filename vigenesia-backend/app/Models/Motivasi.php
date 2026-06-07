@@ -44,4 +44,9 @@ class Motivasi extends Model
     public function reposts() {
         return $this->hasMany(Motivasi::class, 'parent_id');
     }
+
+    public function bookmarks()
+    {
+        return $this->belongsToMany(User::class, 'bookmarks', 'motivasi_id', 'user_id')->withTimestamps();
+    }
 }
