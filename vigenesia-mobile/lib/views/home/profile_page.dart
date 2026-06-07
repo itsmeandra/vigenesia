@@ -18,6 +18,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   late Future<List<dynamic>> _myMotivasi;
   late Future<List<dynamic>> _likedMotivasi;
+  late Future<List<dynamic>> _savedMotivasi;
 
   int _postCount = 0;
   int _likeCount = 0;
@@ -45,12 +46,16 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     timeago.setLocaleMessages('id', timeago.IdMessages());
-    _myMotivasi = _apiService.getMyMotivasi();
-    _likedMotivasi = _apiService.getLikedMotivasi();
     _loadData();
   }
 
   void _loadData() {
+    setState(() {
+      _myMotivasi = _apiService.getMyMotivasi();
+      _likedMotivasi = _apiService.getLikedMotivasi();
+      _savedMotivasi = _apiService
+          .getSavedMotivasi(); // <-- 2. AMBIL DATA SAVED
+    });
     _myMotivasi.then((data) {
       if (mounted) setState(() => _postCount = data.length);
     });
@@ -411,6 +416,37 @@ class _ProfilePageState extends State<ProfilePage> {
                   );
                 },
               ),
+
+              Spacer(),
+
+              // Tombol Saved
+              Builder(
+                builder: (context) {
+                  bool isSaved = false;
+                  if (_myUserId != null && m['bookmarks'] != null) {
+                    isSaved = m['bookmarks'].any((bm) => bm['id'] == _myUserId);
+                  }
+                  return InkWell(
+                    onTap: () async {
+                      int motivasiId = int.parse(m['id'].toString());
+                      await _apiService.toggleSave(motivasiId);
+                      _loadData(); // Refresh profil
+                    },
+                    borderRadius: BorderRadius.circular(20),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4.0,
+                        vertical: 4.0,
+                      ),
+                      child: Icon(
+                        isSaved ? Icons.bookmark : Icons.bookmark_border,
+                        color: isSaved ? primaryOrange : Colors.grey.shade600,
+                        size: 22,
+                      ),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ],
@@ -421,7 +457,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         backgroundColor: Color(0xFFF8F9FA),
         appBar: AppBar(
@@ -481,7 +517,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Container(
               color: Colors.white,
               width: double.infinity,
-              padding: EdgeInsets.only(top: 10, bottom: 0),
+              padding: EdgeInsets.only(top: 20, bottom: 0, left: 24, right: 24),
               child: Column(
                 children: [
                   CircleAvatar(
@@ -511,8 +547,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40.0),
                     child: Text(
-                      _userData?['bio'] ??
-                          "Belum ada bio.",
+                      _userData?['bio'] ?? "Belum ada bio.",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.grey.shade600,
@@ -621,6 +656,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     tabs: [
                       Tab(text: "Posts"),
                       Tab(text: "Liked"),
+                      Tab(text: "Saved"),
                     ],
                   ),
                 ],
@@ -676,6 +712,37 @@ class _ProfilePageState extends State<ProfilePage> {
                         return Center(
                           child: Text(
                             "Belum ada postingan yang disukai.",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        );
+
+                      return RefreshIndicator(
+                        color: primaryOrange,
+                        onRefresh: () async => _loadData(),
+                        child: ListView.builder(
+                          padding: EdgeInsets.zero,
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) =>
+                              _buildPostItem(snapshot.data![index]),
+                        ),
+                      );
+                    },
+                  ),
+
+                  // TAB 3: SAVED
+                  FutureBuilder<List<dynamic>>(
+                    future: _savedMotivasi,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting)
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: primaryOrange,
+                          ),
+                        );
+                      if (!snapshot.hasData || snapshot.data!.isEmpty)
+                        return Center(
+                          child: Text(
+                            "Belum ada postingan yang disimpan.",
                             style: TextStyle(color: Colors.grey),
                           ),
                         );
