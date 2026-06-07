@@ -496,6 +496,47 @@ class _HomePageState extends State<HomePage> {
                               );
                             },
                           ),
+
+                          Spacer(),
+                          
+                          // Tombol Saved
+                          Builder(
+                            builder: (context) {
+                              bool isSaved = false;
+                              // Mengecek apakah ada id user kita di dalam daftar bookmarks
+                              if (_myUserId != null &&
+                                  motivasi['bookmarks'] != null) {
+                                isSaved = motivasi['bookmarks'].any(
+                                  (bm) => bm['id'] == _myUserId,
+                                );
+                              }
+                              return InkWell(
+                                onTap: () async {
+                                  int motivasiId = int.parse(
+                                    motivasi['id'].toString(),
+                                  );
+                                  await _apiService.toggleSave(motivasiId);
+                                  _refreshData(); // Refresh beranda
+                                },
+                                borderRadius: BorderRadius.circular(20),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4.0,
+                                    vertical: 4.0,
+                                  ),
+                                  child: Icon(
+                                    isSaved
+                                        ? Icons.bookmark
+                                        : Icons.bookmark_border,
+                                    color: isSaved
+                                        ? primaryOrange
+                                        : Colors.grey.shade600,
+                                    size: 22,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ],
                       ),
                     ],
