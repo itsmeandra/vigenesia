@@ -7,7 +7,7 @@ class ApiService {
   // PENTING: Gunakan 10.0.2.2 jika pakai Emulator Android.
   // Jika pakai HP asli, gunakan IP WiFi laptop kamu (misal: 192.168.1.x)
   final String baseUrl =
-      'https://ngrok.com/api';
+      'https://isochimal-daniela-turbidly.ngrok-free.dev/api';
 
   ApiService() {
     _dio.options.headers = {
@@ -345,6 +345,43 @@ class ApiService {
         print("ERROR FLUTTER: $e");
       }
       return false;
+    }
+  }
+
+  // Fungsi Save/Unsave (Bookmark)
+  Future<void> toggleSave(int id) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      await _dio.post(
+        '$baseUrl/motivasi/$id/save',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } catch (e) {
+      print('Error Toggle Save: $e');
+      rethrow;
+    }
+  }
+
+  // Fungsi Mengambil Data yang Disimpan
+  Future<List<dynamic>> getSavedMotivasi() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await _dio.get(
+        '$baseUrl/saved-motivasi',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data['data'];
+      }
+      return [];
+    } catch (e) {
+      print('Error Get Saved Motivasi: $e');
+      return [];
     }
   }
 }
