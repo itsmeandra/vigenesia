@@ -11,7 +11,7 @@ class MotivasiController extends Controller
     // Menampilkan semua data motivasi (Beranda)
     public function index()
     {
-        $motivasi = Motivasi::with(['user', 'kategori', 'likes', 'parent', 'parent.user', 'reposts'])
+        $motivasi = Motivasi::with(['user', 'kategori', 'likes', 'parent', 'parent.user', 'reposts', 'bookmarks'])
         ->orderBy('id', 'desc')
         ->get();
         return response()->json(['data' => $motivasi]);
@@ -19,7 +19,7 @@ class MotivasiController extends Controller
 
     public function userMotivasi(Request $request)
     {
-    $motivasi = Motivasi::with(['user', 'kategori', 'likes', 'parent', 'parent.user', 'reposts'])
+    $motivasi = Motivasi::with(['user', 'kategori', 'likes', 'parent', 'parent.user', 'reposts', 'bookmarks'])
         ->where('user_id', $request->user()->id)
         ->orderBy('id', 'desc')
         ->get();
@@ -32,7 +32,7 @@ class MotivasiController extends Controller
         $motivasi = Motivasi::whereHas('likes', function ($query) use ($request) {
             $query->where('user_id', $request->user()->id);
         })
-        ->with(['user', 'kategori', 'likes', 'reposts', 'parent', 'parent.user'])
+        ->with(['user', 'kategori', 'likes', 'reposts', 'parent', 'parent.user', 'bookmarks'])
         ->orderBy('id', 'desc')
         ->get();
 
@@ -101,11 +101,39 @@ class MotivasiController extends Controller
         }
 
         if ($motivasi->user_id != $request->user()->id) {
-            return response()->json(['message' => 'Anda tidak berhak menghaapus motivasi'], 403);
+            return response()->json(['message' => 'Anda tidak berhak menghapus motivasi'], 403);
         }
 
         $motivasi->delete();
 
         return response()->json(['message' => 'Motivasi berhasil dihapus']);
+    }
+
+    // Fungsi untuk Simpan / Batal Simpan (Toggle)
+    public function toggleSave(Request $request, $id)
+    {
+        $user = $request->user();
+        
+        $user->savedMotivasi()->toggle($id);
+
+        return response()->json([
+            'message' => 'Status bookmark berhasil diperbarui'
+        ], 200);
+    }
+
+    // Fungsi untuk mengambil daftar motivasi yang disimpan
+    public function getSavedMotivasi(Request $request)
+    {
+        $user = $request->user();
+        
+        // PENTING: Tambahkan semua relasi agar saat di-render di Flutter tidak error (karena butuh data kategori, likes, dll)
+        $saved = $user->savedMotivasi()
+        ->with(['user', 'kategori', 'likes', 'parent', 'parent.user', 'reposts', 'bookmarks'])
+        ->latest('bookmarks.created_at')
+        ->get();
+
+        return response()->json([
+            'data' => $saved
+        ], 200);
     }
 }
